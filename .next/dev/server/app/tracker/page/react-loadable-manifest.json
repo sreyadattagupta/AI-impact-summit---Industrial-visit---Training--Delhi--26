@@ -1,0 +1,11 @@
+{
+  "[project]/app/components/DeliveryMap.tsx [app-client] (ecmascript, next/dynamic entry)": {
+    "id": "[project]/app/components/DeliveryMap.tsx [app-client] (ecmascript, next/dynamic entry)",
+    "files": [
+      "static/chunks/node_modules_11cd6a26._.js",
+      "static/chunks/app_components_DeliveryMap_tsx_e7a17f1f._.js",
+      "static/chunks/node_modules_leaflet_dist_leaflet_ef5f0413.css",
+      "static/chunks/app_components_DeliveryMap_tsx_ee120902._.js"
+    ]
+  }
+}
