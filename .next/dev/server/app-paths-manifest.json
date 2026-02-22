@@ -1,6 +1,0 @@
-{
-  "/api/train/route": "app/api/train/route.js",
-  "/order/page": "app/order/page.js",
-  "/page": "app/page.js",
-  "/tracker/page": "app/tracker/page.js"
-}
