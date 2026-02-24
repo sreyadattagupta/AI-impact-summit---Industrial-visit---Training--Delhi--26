@@ -1,0 +1,109 @@
+# On-Train Food Ordering & Feedback System — Implementation Plan
+
+A full-stack Next.js application that solves food quality & delivery timing unpredictability for train passengers. The system uses a mock NTES API for live train tracking, triggers food preparation dynamically based on GPS distance to the destination station, shows a live map with the delivery agent, and releases escrow funds only after OTP confirmation.
+
+## Proposed Changes
+
+### Project Structure
+
+```
+xfdghj/
+├── app/
+│   ├── page.tsx                    # Landing — PNR entry
+│   ├── menu/page.tsx               # Food menu & cart
+│   ├── order/[id]/page.tsx         # Order status & live tracking
+│   ├── vendor/page.tsx             # Vendor dashboard
+│   ├── otp/[id]/page.tsx           # OTP verification & escrow release
+│   ├── feedback/[id]/page.tsx      # Feedback & rating
+│   └── layout.tsx                  # Root layout
+├── components/
+│   ├── TrainTracker.tsx            # NTES API status + distance widget
+│   ├── LiveMap.tsx                 # Leaflet map with agent marker
+│   ├── FoodCard.tsx                # Menu item card
+│   ├── CartDrawer.tsx              # Slide-out cart
+│   ├── EscrowStatus.tsx            # Escrow progress UI
+│   ├── OTPInput.tsx               # OTP entry component
+│   └── Notification.tsx           # Toast notifications
+├── lib/
+│   ├── mockDb.ts                   # In-memory mock database
+│   ├── mockNTES.ts                 # Mock NTES train tracking
+│   ├── mockEscrow.ts              # Mock escrow logic
+│   ├── aiRecommendations.ts        # AI food recommendation logic
+│   └── types.ts                    # TypeScript types
+├── api/
+│   ├── train/route.ts              # NTES proxy / mock endpoint
+│   ├── orders/route.ts             # Order CRUD
+│   ├── vendor/notify/route.ts      # Vendor notification trigger
+│   ├── escrow/release/route.ts     # OTP verification + fund release
+│   └── feedback/route.ts          # Submit feedback
+└── public/                         # Static assets
+```
+
+### Key Features & Technical Approach
+
+#### 1. Mock PNR & Train Tracking (NTES API)
+- A mock NTES endpoint (`/api/train`) returns train position, current station, next station, delay status, ETA
+- PNR lookup returns mock passenger + train info
+- Train GPS coords update every 5s (simulated live movement on a route)
+- Distance to destination calculated using Haversine formula
+
+#### 2. Dynamic Food Preparation Trigger
+- When train is **within 30 km** of the stop station → vendor gets notified to start preparation
+- "Hold/Pivot" logic: if train is delayed >15 min, preparation is paused and vendor is re-notified with updated ETA
+- All state managed in mock DB
+
+#### 3. Live Map (Leaflet + OpenStreetMap)
+- `react-leaflet` renders an interactive map
+- Shows: train current position, stop station, delivery agent position
+- Agent position is mocked with a moving marker that approaches station platform
+- Free tiles from OpenStreetMap (no API key required)
+
+#### 4. Escrow Payment (Mock)
+- On order placement, funds are locked in mock escrow
+- Status: `locked → in-transit → released`
+- After delivery agent reaches passenger, an OTP is generated and shown on passenger app
+- Passenger shares OTP with agent; agent enters OTP in vendor app → funds released
+
+#### 5. AI Recommendations
+- Based on PNR class (AC, Sleeper), journey duration, time of day → suggest top 3 food items
+- Simple rule-based logic (no external AI API needed) simulating AI behavior
+- Shown on menu page
+
+#### 6. Feedback System
+- After OTP confirmation → feedback form unlocks
+- Star rating + text review
+- Vendor dashboard shows aggregated ratings
+
+### Pages
+
+| Page | Route | Description |
+|------|-------|-------------|
+| Landing | `/` | PNR entry, mock validation, passenger info display |
+| Menu | `/menu` | Browse food, AI recommendations, add to cart |
+| Order Status | `/order/[id]` | Live train tracker, preparation status, live map |
+| Vendor Dashboard | `/vendor` | Incoming orders, preparation trigger/status, OTP entry |
+| Feedback | `/feedback/[id]` | Rate food and delivery after OTP release |
+
+### Tech Stack
+- **Next.js 14** (App Router)
+- **TypeScript**
+- **react-leaflet** + OpenStreetMap (free, no API key)
+- **Tailwind CSS** for styling
+- **lucide-react** for icons
+- **In-memory mock database** (no external DB needed)
+
+---
+
+## Verification Plan
+
+### Automated
+- Run `npm run build` to verify no TypeScript errors
+
+### Browser Testing (via browser subagent)
+1. Open `http://localhost:3000` → Enter mock PNR `PNR1234567890` → Verify passenger info loads
+2. Navigate to `/menu` → Verify AI recommendations appear, add items to cart
+3. Place order → Verify order status page shows live train tracker and map
+4. Open `/vendor` → Verify incoming order appears, start preparation button visible
+5. Mock train reaching 30km from station → Verify auto-trigger notification appears
+6. Test OTP flow: generate OTP on order page, enter on vendor page → Verify escrow released
+7. Submit feedback → Verify rating appears on vendor dashboard

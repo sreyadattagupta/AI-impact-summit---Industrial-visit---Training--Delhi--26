@@ -1,0 +1,19 @@
+# On-Train Food Ordering & Feedback System
+
+- [x] 1. Setup and Routing
+  - [x] Initialize project structure
+  - [x] Set up basic layout and UI shell
+- [x] 2. Mock Databases (PNRs, orders, menu)
+- [x] 3. Train Tracking & "Hold/Pivot" Logic
+  - [x] Mock NTES API for train status
+  - [x] Calculate distance to station
+  - [x] Trigger food preparation (vendor notification mock)
+- [x] 4. Visual Delivery Map
+  - [x] Integrate free map (e.g. Leaflet via React-Leaflet)
+  - [x] Mock delivery agent location on platform
+- [x] 5. Escrow Payment & OTP
+  - [x] Payment initial state (Escrow)
+  - [x] OTP verification flow
+  - [x] Fund release logic
+- [x] 6. Polish and Visuals
+  - [x] Add animations and premium styling
